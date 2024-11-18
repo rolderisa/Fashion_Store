@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'products',
     'sales',
     'csp',
+    'fastapi',
    
 ]
 
@@ -58,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware'
 ]
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'")
@@ -65,6 +67,7 @@ CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
 CSP_IMG_SRC = ("'self'", "data:", "blob:")
 CSP_FONT_SRC = ("'self'", "data:")
 ROOT_URLCONF = 'myproject.urls'
+FASTAPI_URL = '/api'
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -88,6 +91,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
+ASGI_APPLICATION = 'myproject.myproject.asgi.app'
 
 
 # Database
@@ -137,6 +141,10 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+SESSION_COOKIE_AGE = 3600  # 1 hour in seconds
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+LOGIN_URL = 'login/'  # Adjust this to match your login URL
 
 
 # Static files (CSS, JavaScript, Images)

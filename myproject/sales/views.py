@@ -12,10 +12,18 @@ from django.views.decorators.http import require_POST
 import logging
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
+from django.views.decorators.http import require_GET
 
-
+@require_GET
+def refresh_session(request):
+    if request.user.is_authenticated:
+        request.session.modified = True
+    return JsonResponse({'status': 'ok'})
+@login_required
 def sale_list(request):
-    sales = Sale.objects.all()
+    # sales = Sale.objects.all()
+    sales=Sale.objects.filter(user=request.user)
+
     return render(request, 'sales/sale_list.html', {'sales': sales})
 
 

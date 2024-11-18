@@ -13,9 +13,17 @@ import logging
 from django.db import transaction
 from django.contrib import messages
 
+from django.views.decorators.http import require_GET
 
+@require_GET
+def refresh_session(request):
+    if request.user.is_authenticated:
+        request.session.modified = True
+    return JsonResponse({'status': 'ok'})
 def product_list(request):
-    products = Product.objects.all()
+    # products = Product.objects.all()
+    products=Product.objects.filter(user=request.user)
+
     return render(request, 'products/product_list.html', {'products': products})
 
 
@@ -45,6 +53,7 @@ def product_list(request):
 
 @login_required
 def add_product(request):
+    # Create default categories if none exist
     if Category.objects.count() == 0:
         Category.objects.create(name="Men's Clothing", gender='M')
         Category.objects.create(name="Women's Clothing", gender='W')
@@ -54,6 +63,7 @@ def add_product(request):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
+            product.user = request.user
             if 'image' in request.FILES:
                 product.image = request.FILES['image']
             product.save()

@@ -14,12 +14,20 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import logging
 from django.db import transaction
+from django.views.decorators.http import require_GET
 
-
+@require_GET
+def refresh_session(request):
+    if request.user.is_authenticated:
+        request.session.modified = True
+    return JsonResponse({'status': 'ok'})
 
 @login_required
 def dashboard(request):
     # Sales analytics
+    user_products=  Product.objects.filter(user=request.user)
+    user_sales=Sale.objects.filter(user=request.user)
+    
     today = timezone.now().date()
     last_30_days = today - timedelta(days=30)
     
@@ -37,5 +45,7 @@ def dashboard(request):
         'total_sales': total_sales,
         'sales_by_category': sales_by_category,
         'low_stock_products': low_stock_products,
+         'products':user_products,
+        'sales':user_sales
     }
     return render(request, 'dashboard/dashboard.html', context)

@@ -13,6 +13,13 @@ import logging
 from django.db import transaction
 
 # Create your views here.
+from django.views.decorators.http import require_GET
+
+@require_GET
+def refresh_session(request):
+    if request.user.is_authenticated:
+        request.session.modified = True
+    return JsonResponse({'status': 'ok'})
 @login_required
 def customer_preference(request):
     preference, created = CustomerPreference.objects.get_or_create(user=request.user)
